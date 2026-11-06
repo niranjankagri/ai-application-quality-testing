@@ -1,0 +1,17 @@
+[
+  {
+    "id": "returns-policy",
+    "keywords": ["return", "returns", "refund", "window", "product", "delivery", "item", "packaging"],
+    "response": "Our return window is 30 days from delivery. Items must be unused and in their original packaging."
+  },
+  {
+    "id": "password-reset",
+    "keywords": ["password", "reset", "login", "sign", "account", "email", "link"],
+    "response": "To reset your password, choose Forgot password on the sign-in page and follow the email link. The link expires after 30 minutes."
+  },
+  {
+    "id": "support-hours",
+    "keywords": ["support", "contact", "hours", "help", "team"],
+    "response": "Support is available Monday through Friday, 09:00 to 17:00 UTC, at help@example.test."
+  }
+]
