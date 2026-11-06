@@ -12,6 +12,7 @@ The default target is deterministic: it uses a local response adapter, so the co
 - Prompt-injection attempts to reveal hidden instructions or credentials are refused.
 - The default Promptfoo suite has six deterministic behavior cases; pytest covers eleven component scenarios, including mocked Ollama requests.
 - The optional Ollama suite has five model evaluations and uses a local model as both target and rubric grader.
+- The optional red-team profile generates adversarial checks for confidentiality and grounded answers using a local Ollama model.
 
 ## Prerequisites
 
@@ -42,18 +43,19 @@ macOS / Linux:
 npx --yes promptfoo@latest eval -c promptfooconfig.yaml
 ```
 
-Promptfoo needs to be downloaded the first time you run an evaluation. The default config makes no model API calls. For real local-model evaluation, follow [docs/local-model-evaluation.md](docs/local-model-evaluation.md).
+Promptfoo needs to be downloaded the first time you run an evaluation. The default config makes no model API calls. For real local-model evaluation, follow [docs/local-model-evaluation.md](docs/local-model-evaluation.md). To run adversarial probes, follow [docs/local-red-team-evaluation.md](docs/local-red-team-evaluation.md).
 
 ## Repository map
 
 - `src/ai_quality_lab/assistant.py` — deterministic target and knowledge retrieval.
 - `data/knowledge_base.json` — the three source articles used by the sample assistant.
 - `tests/test_assistant.py` — component-level checks with lowercase test IDs.
-- `promptfoo_provider.py` — connects the target to Promptfoo.
+- `promptfoo_provider.py` — connects the deterministic target to Promptfoo.
 - `promptfooconfig.yaml` — six deterministic behavior evaluations.
 - `promptfooconfig.ollama.yaml` — five optional model-graded evaluations with a local Ollama target and grader.
+- `promptfooconfig.redteam.yaml` — optional local red-team policies and Ollama attacker/grader.
 - `.github/workflows/ci.yml` — runs pytest and Promptfoo on pushes and pull requests.
 
 ## Evaluation approach
 
-Deterministic assertions check expected phrases and reject known bad outputs without an LLM judge. This is useful for repeatable regressions, but it does not prove semantic correctness for arbitrary model outputs. The deterministic suite remains the required CI gate; the optional Ollama suite adds model-generated phrasing and a local model grader without requiring a hosted API key.
+Deterministic assertions check expected phrases and reject known bad outputs without an LLM judge. This is useful for repeatable regressions, but it does not prove semantic correctness for arbitrary model outputs. The deterministic suite remains the required CI gate; the optional Ollama suite adds model-generated phrasing and a local model grader without requiring a hosted API key. The red-team profile is a manually run security assessment and is not part of CI.
