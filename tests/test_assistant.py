@@ -5,6 +5,7 @@ from unittest.mock import patch
 import pytest
 
 from ai_quality_lab.assistant import answer, answer_with_ollama, retrieve_articles
+from ai_quality_lab.retrieval_eval import calculate_retrieval_metrics, load_evaluation_cases, run_retrieval_evaluation
 
 
 @pytest.mark.parametrize(
@@ -36,6 +37,27 @@ def test_tc112_returns_stably_ranked_candidates_up_to_top_k():
 def test_tc113_rejects_a_non_positive_top_k(top_k):
     with pytest.raises(ValueError, match="top_k must be a positive integer"):
         retrieve_articles("support hours", top_k=top_k)
+
+
+def test_tc114_calculates_recall_at_k_and_mean_reciprocal_rank():
+    metrics = calculate_retrieval_metrics(
+        [["article-a", "article-b"], ["article-b"], []],
+        [{"article-b"}, {"article-b"}, {"article-c"}],
+        k_values=(1, 2),
+    )
+
+    assert metrics["recall@1"] == pytest.approx(1 / 3)
+    assert metrics["recall@2"] == pytest.approx(2 / 3)
+    assert metrics["mrr"] == pytest.approx(0.5)
+
+
+def test_tc115_evaluation_dataset_meets_retrieval_and_no_answer_baselines():
+    metrics = run_retrieval_evaluation(load_evaluation_cases())
+
+    assert metrics["recall@1"] >= 0.9
+    assert metrics["recall@3"] >= metrics["recall@1"]
+    assert metrics["mrr"] >= 0.9
+    assert metrics["no_answer_accuracy"] == 1.0
 
 
 def test_tc104_answers_from_the_supported_return_policy():
