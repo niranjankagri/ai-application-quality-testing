@@ -46,8 +46,15 @@ def is_prompt_injection(question: str) -> bool:
     return any(marker in normalized_question for marker in _PROMPT_INJECTION_MARKERS)
 
 
-def retrieve_articles(question: str) -> list[dict[str, Any]]:
-    """Return the best matching support article, or no article for unsupported questions."""
+def retrieve_articles(question: str, *, top_k: int = 1) -> list[dict[str, Any]]:
+    """Return up to top_k matching articles in relevance order.
+
+    The default remains one article for the answer-generation path. Larger values
+    let retrieval evaluations inspect candidate rankings without changing answers.
+    """
+    if top_k < 1:
+        raise ValueError("top_k must be a positive integer")
+
     question_tokens = _tokens(question)
     if not question_tokens:
         return []
@@ -63,7 +70,7 @@ def retrieve_articles(question: str) -> list[dict[str, Any]]:
 
     # Stable tie-breaking keeps evaluation results reproducible.
     scored.sort(key=lambda item: (-item[0], item[1]))
-    return [scored[0][2]]
+    return [item[2] for item in scored[:top_k]]
 
 
 def answer(question: str) -> str:
