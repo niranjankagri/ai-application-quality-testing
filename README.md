@@ -2,7 +2,7 @@
 
 An offline-first quality engineering lab for testing AI application behavior. The first example is a small RAG-style support assistant backed by a fixed knowledge base. It is evaluated for grounded answers, safe handling of prompt-injection attempts, and honest behavior when the answer is missing.
 
-The default target is deterministic: it uses a small local response adapter rather than calling a hosted language model. This keeps the component tests and Promptfoo evaluations repeatable, free of API credentials, and suitable for CI. The example demonstrates the evaluation workflow; it does not claim to measure the semantic quality of a production LLM. A local or hosted model can be connected behind the same provider boundary in a later increment.
+The default target is deterministic: it uses a local response adapter, so the component tests and default Promptfoo evaluations are repeatable and make no model API calls. An optional Ollama target runs the same support flow through a real local model and grades open-ended answers with a local rubric model.
 
 ## What the first increment covers
 
@@ -10,7 +10,8 @@ The default target is deterministic: it uses a small local response adapter rath
 - Answers stay within the bundled return, password-reset, and support-hours articles.
 - Unsupported questions receive an explicit “I don't have that information” response.
 - Prompt-injection attempts to reveal hidden instructions or credentials are refused.
-- Promptfoo runs six behavior cases, while pytest covers six component scenarios.
+- The default Promptfoo suite has six deterministic behavior cases; pytest covers eleven component scenarios, including mocked Ollama requests.
+- The optional Ollama suite has five model evaluations and uses a local model as both target and rubric grader.
 
 ## Prerequisites
 
@@ -41,7 +42,7 @@ macOS / Linux:
 npx --yes promptfoo@latest eval -c promptfooconfig.yaml
 ```
 
-Promptfoo needs to be downloaded the first time you run the evaluation. The evaluation itself uses the local provider and makes no model API calls.
+Promptfoo needs to be downloaded the first time you run an evaluation. The default config makes no model API calls. For real local-model evaluation, follow [docs/local-model-evaluation.md](docs/local-model-evaluation.md).
 
 ## Repository map
 
@@ -49,9 +50,10 @@ Promptfoo needs to be downloaded the first time you run the evaluation. The eval
 - `data/knowledge_base.json` — the three source articles used by the sample assistant.
 - `tests/test_assistant.py` — component-level checks with lowercase test IDs.
 - `promptfoo_provider.py` — connects the target to Promptfoo.
-- `promptfooconfig.yaml` — six behavioral evaluations.
+- `promptfooconfig.yaml` — six deterministic behavior evaluations.
+- `promptfooconfig.ollama.yaml` — five optional model-graded evaluations with a local Ollama target and grader.
 - `.github/workflows/ci.yml` — runs pytest and Promptfoo on pushes and pull requests.
 
 ## Evaluation approach
 
-Deterministic assertions check expected phrases and reject known bad outputs without an LLM judge. This is useful for repeatable regressions, but it does not prove semantic correctness for arbitrary model outputs. The next increment can add an optional real-model target and model-graded checks, while keeping the no-credential local path as the default.
+Deterministic assertions check expected phrases and reject known bad outputs without an LLM judge. This is useful for repeatable regressions, but it does not prove semantic correctness for arbitrary model outputs. The deterministic suite remains the required CI gate; the optional Ollama suite adds model-generated phrasing and a local model grader without requiring a hosted API key.
