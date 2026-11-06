@@ -22,6 +22,22 @@ def test_tc101_to_tc103_retrieves_the_matching_support_article(question, article
     assert [article["id"] for article in articles] == [article_id]
 
 
+def test_tc112_returns_stably_ranked_candidates_up_to_top_k():
+    articles = retrieve_articles("return password support", top_k=3)
+
+    assert [article["id"] for article in articles] == [
+        "password-reset",
+        "returns-policy",
+        "support-hours",
+    ]
+
+
+@pytest.mark.parametrize("top_k", [0, -1], ids=["tc113_zero_limit", "tc113_negative_limit"])
+def test_tc113_rejects_a_non_positive_top_k(top_k):
+    with pytest.raises(ValueError, match="top_k must be a positive integer"):
+        retrieve_articles("support hours", top_k=top_k)
+
+
 def test_tc104_answers_from_the_supported_return_policy():
     response = answer("How many days do I have to return an item?")
 
