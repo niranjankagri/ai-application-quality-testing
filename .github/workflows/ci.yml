@@ -35,5 +35,8 @@ jobs:
       - name: Run component tests
         run: python -m pytest
 
+      - name: Run retrieval quality evaluation
+        run: python -m ai_quality_lab.retrieval_eval --min-recall-at-1 0.9 --min-no-answer-accuracy 1.0
+
       - name: Run deterministic Promptfoo evaluations
         run: npx --yes promptfoo@latest eval --no-share -c promptfooconfig.yaml
