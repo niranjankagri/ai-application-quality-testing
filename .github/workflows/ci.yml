@@ -36,4 +36,4 @@ jobs:
         run: python -m pytest
 
       - name: Run deterministic Promptfoo evaluations
-        run: npx --yes promptfoo@latest eval --ci -c promptfooconfig.yaml
+        run: npx --yes promptfoo@latest eval --no-share -c promptfooconfig.yaml
