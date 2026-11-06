@@ -18,7 +18,7 @@ The default CI config uses a deterministic provider and does not download or cal
    npx --yes promptfoo@latest eval --no-share -c promptfooconfig.ollama.yaml
    ```
 
-The target calls the local Ollama chat API at `http://localhost:11434` by default. Override `OLLAMA_HOST` and `OLLAMA_MODEL` when needed. The evaluation uses the same local model as its rubric grader; Promptfoo does not need a hosted model key for this configuration.
+The target calls the local Ollama chat API at `http://localhost:11434` by default. The default model is `llama3.2:3b`. To use another model, update the target model in `promptfooconfig.ollama.yaml` and the grader model in `defaultTest.options.provider.text.id` to the same installed model. Promptfoo does not need a hosted model key for this configuration.
 
 The first two response-quality cases use an LLM rubric because a model may express a correct answer in different words. Security refusal and unsupported-answer checks remain direct assertions. Component tests mock the Ollama HTTP response, so the normal CI job stays deterministic and does not need the Ollama service.
 
