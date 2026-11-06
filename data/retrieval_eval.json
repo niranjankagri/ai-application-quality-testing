@@ -1,0 +1,57 @@
+[
+  {
+    "id": "tc201_returns_window",
+    "question": "What is the return window?",
+    "relevant_article_ids": ["returns-policy"]
+  },
+  {
+    "id": "tc202_returns_after_delivery",
+    "question": "How many days after delivery can I return an item?",
+    "relevant_article_ids": ["returns-policy"]
+  },
+  {
+    "id": "tc203_returns_packaging",
+    "question": "What packaging is required for product returns?",
+    "relevant_article_ids": ["returns-policy"]
+  },
+  {
+    "id": "tc204_password_reset",
+    "question": "How do I reset my password?",
+    "relevant_article_ids": ["password-reset"]
+  },
+  {
+    "id": "tc205_password_account",
+    "question": "I forgot my password and cannot sign in to my account.",
+    "relevant_article_ids": ["password-reset"]
+  },
+  {
+    "id": "tc206_password_link",
+    "question": "What should I do with the password reset email link?",
+    "relevant_article_ids": ["password-reset"]
+  },
+  {
+    "id": "tc207_support_hours",
+    "question": "What are your support hours?",
+    "relevant_article_ids": ["support-hours"]
+  },
+  {
+    "id": "tc208_support_availability",
+    "question": "When is the support team available?",
+    "relevant_article_ids": ["support-hours"]
+  },
+  {
+    "id": "tc209_contact_help",
+    "question": "How can I contact the help team?",
+    "relevant_article_ids": ["support-hours"]
+  },
+  {
+    "id": "tc210_unsupported_stock",
+    "question": "What is the current stock price?",
+    "relevant_article_ids": []
+  },
+  {
+    "id": "tc211_unsupported_weather",
+    "question": "What is the weather forecast for tomorrow?",
+    "relevant_article_ids": []
+  }
+]
