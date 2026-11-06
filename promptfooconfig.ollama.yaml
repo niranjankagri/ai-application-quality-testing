@@ -5,7 +5,7 @@ providers:
   - id: "file://./ollama_provider.py"
     label: "RAG support assistant via local Ollama"
     config:
-      model: "{{ env.OLLAMA_MODEL | default('llama3.2:3b') }}"
+      model: "llama3.2:3b"
 defaultTest:
   options:
     provider:
