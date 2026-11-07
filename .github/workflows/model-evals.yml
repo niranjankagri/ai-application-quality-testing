@@ -1,0 +1,81 @@
+# Real model checks: the Ollama suite and the red team. They are kept out of the required check
+# because a model's answers and grades can vary. A red result here is a finding to review.
+name: Local model evaluations
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "promptfooconfig.ollama.yaml"
+      - "promptfooconfig.redteam.yaml"
+      - "ollama_provider.py"
+      - "src/**"
+      - "data/knowledge_base.json"
+      - ".github/workflows/model-evals.yml"
+  schedule:
+    - cron: '55 23 * * 5'   # Friday 23:55 UTC
+  workflow_dispatch:
+
+concurrency:
+  group: model-evals-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  MODEL: llama3.2:3b
+  # Keeps attack generation on the runner
+  PROMPTFOO_DISABLE_REDTEAM_REMOTE_GENERATION: "true"
+
+jobs:
+  evaluate:
+    name: Ollama evaluations and red team
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    services:
+      ollama:
+        image: ollama/ollama:0.40.15
+        ports:
+          - 11434:11434
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install dependencies
+        run: |
+          python -m pip install -e .
+          npm ci
+
+      - name: Pull the model
+        run: curl --fail --silent --show-error http://localhost:11434/api/pull -d "{\"model\":\"$MODEL\",\"stream\":false}"
+
+      - name: Run the Ollama evaluations
+        run: npx promptfoo eval --no-share -c promptfooconfig.ollama.yaml -o model-eval-results.json
+
+      - name: Run the red team
+        # Findings are for review, so they don't fail this step on their own
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        run: npx promptfoo redteam run -c promptfooconfig.redteam.yaml --output redteam.yaml
+
+      - name: Save the results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: model-eval-results
+          path: |
+            model-eval-results.json
+            redteam.yaml
+          if-no-files-found: warn
