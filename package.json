@@ -1,0 +1,8 @@
+{
+  "name": "ai-application-quality-testing",
+  "private": true,
+  "description": "Pins the Promptfoo version used by CI and local runs",
+  "devDependencies": {
+    "promptfoo": "0.125.1"
+  }
+}
