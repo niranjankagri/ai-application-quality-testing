@@ -1,57 +1,117 @@
 [
   {
-    "id": "tc201_returns_window",
+    "id": "rq01_returns_window",
     "question": "What is the return window?",
     "relevant_article_ids": ["returns-policy"]
   },
   {
-    "id": "tc202_returns_after_delivery",
+    "id": "rq02_returns_after_delivery",
     "question": "How many days after delivery can I return an item?",
     "relevant_article_ids": ["returns-policy"]
   },
   {
-    "id": "tc203_returns_packaging",
+    "id": "rq03_returns_packaging",
     "question": "What packaging is required for product returns?",
     "relevant_article_ids": ["returns-policy"]
   },
   {
-    "id": "tc204_password_reset",
+    "id": "rq04_password_reset",
     "question": "How do I reset my password?",
     "relevant_article_ids": ["password-reset"]
   },
   {
-    "id": "tc205_password_account",
+    "id": "rq05_password_account",
     "question": "I forgot my password and cannot sign in to my account.",
     "relevant_article_ids": ["password-reset"]
   },
   {
-    "id": "tc206_password_link",
+    "id": "rq06_password_link",
     "question": "What should I do with the password reset email link?",
     "relevant_article_ids": ["password-reset"]
   },
   {
-    "id": "tc207_support_hours",
+    "id": "rq07_support_hours",
     "question": "What are your support hours?",
     "relevant_article_ids": ["support-hours"]
   },
   {
-    "id": "tc208_support_availability",
+    "id": "rq08_support_availability",
     "question": "When is the support team available?",
     "relevant_article_ids": ["support-hours"]
   },
   {
-    "id": "tc209_contact_help",
+    "id": "rq09_contact_help",
     "question": "How can I contact the help team?",
     "relevant_article_ids": ["support-hours"]
   },
   {
-    "id": "tc210_unsupported_stock",
+    "id": "rq10_unsupported_stock",
     "question": "What is the current stock price?",
     "relevant_article_ids": []
   },
   {
-    "id": "tc211_unsupported_weather",
+    "id": "rq11_unsupported_weather",
     "question": "What is the weather forecast for tomorrow?",
     "relevant_article_ids": []
+  },
+  {
+    "id": "rq12_returns_money_back",
+    "question": "Can I get my money back?",
+    "relevant_article_ids": ["returns-policy"]
+  },
+  {
+    "id": "rq13_returns_refund_policy",
+    "question": "What is your refund policy?",
+    "relevant_article_ids": ["returns-policy"]
+  },
+  {
+    "id": "rq14_password_log_in",
+    "question": "I can't log in",
+    "relevant_article_ids": ["password-reset"]
+  },
+  {
+    "id": "rq15_password_locked_out",
+    "question": "I am locked out of my account",
+    "relevant_article_ids": ["password-reset"]
+  },
+  {
+    "id": "rq16_support_email",
+    "question": "What is the support email address?",
+    "relevant_article_ids": ["support-hours"]
+  },
+  {
+    "id": "rq17_unsupported_investment",
+    "question": "What is the return on investment for this company?",
+    "relevant_article_ids": []
+  },
+  {
+    "id": "rq18_unsupported_email_provider",
+    "question": "What is your favourite email provider?",
+    "relevant_article_ids": []
+  },
+  {
+    "id": "rq19_unsupported_roadmap",
+    "question": "Do you have a product roadmap?",
+    "relevant_article_ids": []
+  },
+  {
+    "id": "rq20_unsupported_delivery_cost",
+    "question": "Is delivery free?",
+    "relevant_article_ids": []
+  },
+  {
+    "id": "rq21_unsupported_bank_account",
+    "question": "How do I link my bank account?",
+    "relevant_article_ids": []
+  },
+  {
+    "id": "rq22_returns_want_to_return",
+    "question": "I want to return this",
+    "relevant_article_ids": ["returns-policy"]
+  },
+  {
+    "id": "rq23_password_sign_in",
+    "question": "I can't sign in",
+    "relevant_article_ids": ["password-reset"]
   }
 ]
