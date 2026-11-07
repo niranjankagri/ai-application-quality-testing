@@ -15,12 +15,13 @@ The default CI config uses a deterministic provider and does not download or cal
 3. In another terminal, from the repository root, run:
 
    ```shell
-   npx --yes promptfoo@latest eval --no-share -c promptfooconfig.ollama.yaml
+   npm ci
+   npx promptfoo eval --no-share -c promptfooconfig.ollama.yaml
    ```
 
 The target calls the local Ollama chat API at `http://localhost:11434` by default. The default model is `llama3.2:3b`. To use another model, update the target model in `promptfooconfig.ollama.yaml` and the grader model in `defaultTest.options.provider.text.id` to the same installed model. Promptfoo does not need a hosted model key for this configuration.
 
-The first two response-quality cases use an LLM rubric because a model may express a correct answer in different words. Security refusal and unsupported-answer checks remain direct assertions. Component tests mock the Ollama HTTP response, so the normal CI job stays deterministic and does not need the Ollama service.
+The three response-quality cases (`TC-301`, `TC-302` and `TC-305`) use an LLM rubric because a model may express a correct answer in different words. Security refusal and unsupported-answer checks remain direct assertions. Component tests mock the Ollama HTTP response, so the required CI job stays deterministic and does not need the Ollama service. The `model-evals.yml` workflow runs this suite weekly on GitHub, outside the required check.
 
 ## Limitations
 
