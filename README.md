@@ -7,13 +7,14 @@ The default target is deterministic: it uses a local response adapter, so the co
 ## What the project covers
 
 - Retrieval returns the most relevant support article with stable tie-breaking.
-- A labeled query set measures Recall@1, Recall@3, mean reciprocal rank, and no-answer accuracy.
+- A labeled set of 23 queries, including questions that share a word with an article but can't be answered from it, measures Recall@1, Recall@3, mean reciprocal rank, and no-answer accuracy.
 - Answers stay within the bundled return, password-reset, and support-hours articles.
 - Unsupported questions receive an explicit “I don't have that information” response.
 - Prompt-injection attempts to reveal hidden instructions or credentials are refused.
-- The default Promptfoo suite has six deterministic behavior cases; pytest covers sixteen component scenarios, including mocked Ollama requests and retrieval quality.
+- The default Promptfoo suite has nine deterministic behavior cases; pytest covers twenty-eight component scenarios, including mocked Ollama requests and retrieval quality.
 - The optional Ollama suite has five model evaluations and uses a local model as both target and rubric grader.
 - The optional red-team profile generates adversarial checks for confidentiality and grounded answers using a local Ollama model.
+- A separate weekly workflow runs the Ollama suite and the red team on GitHub, outside the required check.
 
 ## Prerequisites
 
@@ -34,7 +35,9 @@ Windows:
 .venv\Scripts\python -m pip install -e ".[test]"
 .venv\Scripts\python -m pytest
 .venv\Scripts\python -m ai_quality_lab.retrieval_eval
-npx --yes promptfoo@latest eval -c promptfooconfig.yaml
+npm ci
+$env:PROMPTFOO_PYTHON = ".venv\Scripts\python.exe"
+npx promptfoo eval --no-share -c promptfooconfig.yaml
 ```
 
 macOS / Linux:
@@ -43,10 +46,11 @@ macOS / Linux:
 .venv/bin/python -m pip install -e ".[test]"
 .venv/bin/python -m pytest
 .venv/bin/python -m ai_quality_lab.retrieval_eval
-npx --yes promptfoo@latest eval -c promptfooconfig.yaml
+npm ci
+PROMPTFOO_PYTHON=.venv/bin/python npx promptfoo eval --no-share -c promptfooconfig.yaml
 ```
 
-Promptfoo needs to be downloaded the first time you run an evaluation. The default config makes no model API calls. For real local-model evaluation, follow [docs/local-model-evaluation.md](docs/local-model-evaluation.md). To run adversarial probes, follow [docs/local-red-team-evaluation.md](docs/local-red-team-evaluation.md). See [docs/retrieval-evaluation.md](docs/retrieval-evaluation.md) for metric definitions and the CI thresholds.
+`npm ci` installs the Promptfoo version pinned in `package-lock.json`, so a new release can't change a build without a commit. The default config makes no model API calls. For real local-model evaluation, follow [docs/local-model-evaluation.md](docs/local-model-evaluation.md). To run adversarial probes, follow [docs/local-red-team-evaluation.md](docs/local-red-team-evaluation.md). See [docs/retrieval-evaluation.md](docs/retrieval-evaluation.md) for metric definitions and the CI thresholds.
 
 ## Repository map
 
@@ -56,10 +60,12 @@ Promptfoo needs to be downloaded the first time you run an evaluation. The defau
 - `data/retrieval_eval.json` — labeled retrieval queries and expected article IDs.
 - `tests/test_assistant.py` — component-level checks with lowercase test IDs.
 - `promptfoo_provider.py` — connects the deterministic target to Promptfoo.
-- `promptfooconfig.yaml` — six deterministic behavior evaluations.
+- `promptfooconfig.yaml` — nine deterministic behavior evaluations.
 - `promptfooconfig.ollama.yaml` — five optional model-graded evaluations with a local Ollama target and grader.
 - `promptfooconfig.redteam.yaml` — optional local red-team policies and Ollama attacker/grader.
-- `.github/workflows/ci.yml` — runs pytest, retrieval quality checks, and Promptfoo on pushes and pull requests.
+- `.github/workflows/ci.yml` — runs pytest, retrieval quality checks, and Promptfoo on pushes, pull requests and weekly.
+- `.github/workflows/model-evals.yml` — runs the Ollama suite and the red team weekly and when the model path changes.
+- `package.json`, `package-lock.json` — pin the Promptfoo version.
 
 ## Evaluation approach
 

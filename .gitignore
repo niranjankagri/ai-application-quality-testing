@@ -1,7 +1,11 @@
 .venv/
+node_modules/
+*.egg-info/
 __pycache__/
 *.py[cod]
 .pytest_cache/
 .promptfoo/
 promptfoo-results.html
 promptfoo-results.json
+model-eval-results.json
+redteam.yaml
