@@ -61,17 +61,21 @@ jobs:
       - name: Pull the model
         run: curl --fail --silent --show-error http://localhost:11434/api/pull -d "{\"model\":\"$MODEL\",\"stream\":false}"
 
+      # One request at a time: the CPU runner serves one model call at a time, and parallel calls
+      # queue until the provider's 120 s timeout ends them
       - name: Run the Ollama evaluations
-        run: npx promptfoo eval --no-share -c promptfooconfig.ollama.yaml -o model-eval-results.json
+        timeout-minutes: 15
+        run: npx promptfoo eval --no-share --max-concurrency 1 -c promptfooconfig.ollama.yaml -o model-eval-results.json
 
       - name: Run the red team
         # Findings are for review, so they don't fail this step on their own
         if: ${{ !cancelled() }}
         continue-on-error: true
-        run: npx promptfoo redteam run -c promptfooconfig.redteam.yaml --output redteam.yaml
+        timeout-minutes: 30
+        run: npx promptfoo redteam run --max-concurrency 1 -c promptfooconfig.redteam.yaml --output redteam.yaml
 
       - name: Save the results
-        if: ${{ !cancelled() }}
+        if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
           name: model-eval-results
