@@ -4,5 +4,8 @@
   "description": "Pins the Promptfoo version used by CI and local runs",
   "devDependencies": {
     "promptfoo": "0.125.1"
+  },
+  "overrides": {
+    "@hono/node-server": "2.1.6"
   }
 }
