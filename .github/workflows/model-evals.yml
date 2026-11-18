@@ -77,6 +77,12 @@ jobs:
         timeout-minutes: 30
         run: npx promptfoo redteam run --max-concurrency 1 -c promptfooconfig.redteam.yaml --output redteam.yaml
 
+      # redteam.yaml holds only the generated attacks; this saves each answer and grader reason
+      - name: Export the red team results
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        run: npx promptfoo export eval latest -o redteam-results.json
+
       - name: Save the results
         if: ${{ always() }}
         uses: actions/upload-artifact@v7
@@ -85,4 +91,5 @@ jobs:
           path: |
             model-eval-results.json
             redteam.yaml
+            redteam-results.json
           if-no-files-found: warn
