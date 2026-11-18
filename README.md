@@ -12,7 +12,7 @@ The default target is deterministic: it uses a local response adapter, so the co
 - Unsupported questions receive an explicit “I don't have that information” response.
 - Prompt-injection attempts to reveal hidden instructions or credentials are refused.
 - The default Promptfoo suite has nine deterministic behavior cases; pytest covers twenty-eight component scenarios, including mocked Ollama requests and retrieval quality.
-- The optional Ollama suite has five model evaluations and uses a local model as both target and rubric grader.
+- The optional Ollama suite has five model evaluations and uses local models: `llama3.2:3b` answers and `qwen2.5:7b` grades.
 - The optional red-team profile generates adversarial checks for confidentiality and grounded answers using a local Ollama model.
 - A separate weekly workflow runs the Ollama suite and the red team on GitHub, outside the required check.
 

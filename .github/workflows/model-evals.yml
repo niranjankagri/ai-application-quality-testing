@@ -25,6 +25,8 @@ permissions:
 
 env:
   MODEL: llama3.2:3b
+  # Grades the answers; the 3b model was not reliable as a grader
+  GRADER_MODEL: qwen2.5:7b
   # Keeps attack generation on the runner
   PROMPTFOO_DISABLE_REDTEAM_REMOTE_GENERATION: "true"
   # Ends one stuck test after 5 minutes instead of letting it use the whole step timeout
@@ -61,8 +63,11 @@ jobs:
           python -m pip install -e .
           npm ci
 
-      - name: Pull the model
-        run: curl --fail --silent --show-error http://localhost:11434/api/pull -d "{\"model\":\"$MODEL\",\"stream\":false}"
+      - name: Pull the models
+        run: |
+          for m in "$MODEL" "$GRADER_MODEL"; do
+            curl --fail --silent --show-error http://localhost:11434/api/pull -d "{\"model\":\"$m\",\"stream\":false}"
+          done
 
       # One request at a time: the CPU runner serves one model call at a time, and parallel calls
       # queue until the provider's 120 s timeout ends them
