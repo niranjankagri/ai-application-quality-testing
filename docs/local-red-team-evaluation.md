@@ -5,9 +5,10 @@ The red-team profile adds adversarial checks for the support assistant's confide
 ## Setup
 
 1. Install Ollama and keep its local server running.
-2. Pull the model used by the profile:
+2. Pull the assistant model (it also writes the attacks) and the grader model:
 
    ```shell
+   ollama pull qwen2.5:7b
    ollama run llama3.2:3b
    ```
 

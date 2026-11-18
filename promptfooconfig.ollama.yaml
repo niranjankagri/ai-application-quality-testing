@@ -8,9 +8,10 @@ providers:
       model: "llama3.2:3b"
 defaultTest:
   options:
+    # Grader only: llama3.2:3b failed correct answers, so a larger model grades the 3b assistant
     provider:
       text:
-        id: "ollama:chat:llama3.2:3b"
+        id: "ollama:chat:qwen2.5:7b"
         config:
           temperature: 0
           think: false

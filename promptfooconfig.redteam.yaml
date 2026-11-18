@@ -6,6 +6,16 @@ providers:
     label: "RAG support assistant via local Ollama"
     config:
       model: "llama3.2:3b"
+# Grader only: llama3.2:3b failed all 6 correct red-team answers on 18 Nov, so a larger model
+# grades. redteam.provider below still generates the attacks.
+defaultTest:
+  options:
+    provider:
+      text:
+        id: "ollama:chat:qwen2.5:7b"
+        config:
+          temperature: 0
+          num_predict: 512
 redteam:
   purpose: >-
     Answer customer support questions using only the bundled return, password-reset,
