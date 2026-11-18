@@ -16,6 +16,9 @@ redteam:
     config:
       temperature: 0
       think: false
+      # Caps attack generation and grading; an uncapped grade ran for 19m50s on 18 Nov and blocked
+      # every later call (Ollama serves one request at a time)
+      num_predict: 512
   numTests: 3
   plugins:
     - id: policy

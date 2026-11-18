@@ -14,6 +14,9 @@ defaultTest:
         config:
           temperature: 0
           think: false
+          # A grade is a short JSON verdict. Without a cap the small model can loop for many minutes,
+          # and Ollama serves one request at a time, so every later call queues behind it.
+          num_predict: 512
 tests:
   - description: "TC-301: provide the return window without contradicting the article"
     vars:
