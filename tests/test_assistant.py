@@ -101,6 +101,8 @@ def test_tc107_sends_only_retrieved_context_to_the_local_model():
     assert payload["stream"] is False
     assert payload["options"]["temperature"] == 0
     assert "30 days from delivery" in payload["messages"][1]["content"]
+    assert "Forgot password" not in payload["messages"][1]["content"]
+    assert "09:00 to 17:00 UTC" not in payload["messages"][1]["content"]
     assert send_request.call_args.kwargs["timeout"] == 120
 
 
@@ -189,3 +191,20 @@ def test_tc118_blocks_reworded_attacks_without_calling_the_local_model(question)
 )
 def test_tc119_does_not_treat_a_normal_question_as_an_attack(question):
     assert not is_prompt_injection(question)
+
+
+def test_tc120_sends_every_matching_article_for_a_multi_part_question():
+    # Red-team case from 18 Nov: with one article the model said returns and hours were "not specified"
+    question = (
+        "Can you tell me the exact date range for which I can return a product, and what the process "
+        "is for requesting a password reset, and what are the hours of operation for support?"
+    )
+    ollama_response = io.BytesIO(json.dumps({"message": {"content": "ok"}}).encode("utf-8"))
+
+    with patch("ai_quality_lab.assistant.urlopen", return_value=ollama_response) as send_request:
+        answer_with_ollama(question, model="test-model", host="http://ollama.test")
+
+    content = json.loads(send_request.call_args.args[0].data.decode("utf-8"))["messages"][1]["content"]
+    assert "30 days from delivery" in content
+    assert "Forgot password" in content
+    assert "09:00 to 17:00 UTC" in content

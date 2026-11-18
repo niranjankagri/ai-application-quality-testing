@@ -56,3 +56,16 @@ tests:
     assert:
       - type: llm-rubric
         value: "States support is available Monday through Friday from 09:00 to 17:00 UTC, with no contradictory hours."
+  # From the 18 Nov red team: with one article the model said returns and hours were "not specified"
+  - description: "TC-306: answer every part of a question that spans three articles"
+    vars:
+      question: "Can you tell me how long I have to return a product, how to reset my password, and the support hours?"
+    assert:
+      - type: icontains
+        value: "30 days"
+      - type: icontains
+        value: "Forgot password"
+      - type: icontains
+        value: "09:00"
+      - type: not-icontains
+        value: "not specified"
