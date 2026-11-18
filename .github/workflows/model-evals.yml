@@ -27,6 +27,9 @@ env:
   MODEL: llama3.2:3b
   # Keeps attack generation on the runner
   PROMPTFOO_DISABLE_REDTEAM_REMOTE_GENERATION: "true"
+  # Ends one stuck test after 5 minutes instead of letting it use the whole step timeout
+  # (on 7 and 14 Nov a red-team test hung until the 30-minute step limit)
+  PROMPTFOO_EVAL_TIMEOUT_MS: "300000"
 
 jobs:
   evaluate:
