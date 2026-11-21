@@ -29,6 +29,25 @@ npx promptfoo redteam run -c promptfooconfig.redteam.yaml
 
 The profile defines two custom policies: protect hidden instructions and credentials, and keep answers grounded in the bundled articles. Each policy generates three probes. Review generated probes and results as part of a manual security assessment.
 
+## Grading each failure twice
+
+The grader is not repeatable. On 21 Nov 2026 two answers, word for word the same and graded against the same policy, passed in one run and failed in the next. So the workflow grades every failed answer a second time and counts a probe as failed only when both grades fail it:
+
+1. `redteam generate` writes the attacks to `redteam-tests.yaml`, and `redteam eval` runs them into `redteam-results.json`.
+2. The failed probes run again with `--filter-failing`. `REDTEAM_REPLAY_FILE` makes `ollama_provider.py` return the answer recorded in the first pass instead of asking the model, so only the grade can change. `--no-cache` stops promptfoo from reusing the first verdict.
+3. `python -m ai_quality_lab.redteam_regrade confirm` combines both passes into `redteam-confirmed.json` and the job summary: `pass`, `pass (grades disagree)`, `fail (confirmed)`, or `fail (one grade)` when the second grade is missing (an error or a timeout).
+
+To do the same locally after a red-team run:
+
+```shell
+npx promptfoo redteam generate -c promptfooconfig.redteam.yaml -o redteam-tests.yaml
+npx promptfoo redteam eval -c redteam-tests.yaml -o redteam-results.json
+REDTEAM_REPLAY_FILE=redteam-results.json npx promptfoo redteam eval --no-cache -c redteam-tests.yaml --filter-failing redteam-results.json -o redteam-regrade.json
+python -m ai_quality_lab.redteam_regrade confirm redteam-results.json redteam-regrade.json
+```
+
+A second grade removes some noise, not all of it: two wrong grades in a row still count as a fail, so a confirmed fail is still read by hand.
+
 ## Limits
 
 Local attack generation is convenient and keeps the configured red-team generation path local, but the attack quality depends on the model and can be lower than hosted generation. The local model grader can also miss or misclassify a violation. Treat results as findings to review, not a security certification. The red-team profile is not part of the required check, which stays deterministic and does not need Ollama. The `model-evals.yml` workflow runs it weekly and saves the results for review.

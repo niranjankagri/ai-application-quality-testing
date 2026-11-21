@@ -9,3 +9,7 @@ promptfoo-results.html
 promptfoo-results.json
 model-eval-results.json
 redteam.yaml
+redteam-tests.yaml
+redteam-results.json
+redteam-regrade.json
+redteam-confirmed.json

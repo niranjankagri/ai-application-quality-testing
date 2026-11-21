@@ -18,5 +18,6 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["src"]
+# "." lets the tests import the Promptfoo adapters at the repository root
+pythonpath = ["src", "."]
 addopts = "-ra"
