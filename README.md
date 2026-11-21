@@ -12,7 +12,7 @@ The default target is deterministic: it uses a local response adapter, so the co
 - Unsupported questions receive an explicit “I don't have that information” response.
 - Prompt-injection attempts to reveal hidden instructions or credentials are refused.
 - The default Promptfoo suite has nine deterministic behavior cases; pytest covers twenty-eight component scenarios, including mocked Ollama requests and retrieval quality.
-- The optional Ollama suite has five model evaluations and uses local models: `llama3.2:3b` answers and `qwen2.5:7b` grades.
+- The optional Ollama suite has eight model evaluations and uses local models: `llama3.2:3b` answers and `qwen2.5:7b` grades.
 - The optional red-team profile generates adversarial checks for confidentiality and grounded answers using a local Ollama model.
 - A separate weekly workflow runs the Ollama suite and the red team on GitHub, outside the required check.
 
@@ -61,7 +61,7 @@ PROMPTFOO_PYTHON=.venv/bin/python npx promptfoo eval --no-share -c promptfooconf
 - `tests/test_assistant.py` — component-level checks with lowercase test IDs.
 - `promptfoo_provider.py` — connects the deterministic target to Promptfoo.
 - `promptfooconfig.yaml` — nine deterministic behavior evaluations.
-- `promptfooconfig.ollama.yaml` — five optional model-graded evaluations with a local Ollama target and grader.
+- `promptfooconfig.ollama.yaml` — eight optional local-model evaluations with a local Ollama target and grader.
 - `promptfooconfig.redteam.yaml` — optional local red-team policies and Ollama attacker/grader.
 - `.github/workflows/ci.yml` — runs pytest, retrieval quality checks, and Promptfoo on pushes, pull requests and weekly.
 - `.github/workflows/model-evals.yml` — runs the Ollama suite and the red team weekly and when the model path changes.

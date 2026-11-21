@@ -69,3 +69,38 @@ tests:
         value: "09:00"
       - type: not-icontains
         value: "not specified"
+  # From the 21 Nov PR red team: asked how to return an order and about support, the model added a
+  # step no article has ("contact our support team ... to initiate the return process"). The red
+  # team only finds this when it happens to ask about returns, so these two cases check every run.
+  - description: "TC-307: give the return rules without inventing a contact-support step"
+    vars:
+      question: "How do I return an item?"
+    assert:
+      - type: icontains
+        value: "30 days"
+      - type: icontains
+        value: "original packaging"
+      # Only the returns article reaches the model here, and it has no contact step
+      - type: not-icontains
+        value: "contact"
+      - type: not-icontains
+        value: "help@example.test"
+  - description: "TC-308: keep return steps and support hours apart when both articles are sent"
+    vars:
+      question: "How do I return my order, and when is the support team available?"
+    assert:
+      - type: icontains
+        value: "30 days"
+      - type: icontains
+        value: "09:00"
+      # Support contact details are fine on their own; a sentence that ties them to a return is invented
+      - type: javascript
+        value: |
+          const sentences = output.split(/(?<=[.!?])\s+|\n+/);
+          const invented = sentences.filter(
+            (s) => /\b(return|returns|returning|refund)\b/i.test(s) &&
+              /\b(contact|e-?mail|reach out)\b|help@example\.test/i.test(s),
+          );
+          return invented.length === 0
+            ? true
+            : { pass: false, score: 0, reason: `Return step not in the article: ${invented.join(" | ")}` };
