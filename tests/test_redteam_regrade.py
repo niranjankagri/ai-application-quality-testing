@@ -8,15 +8,21 @@ from ai_quality_lab.redteam_regrade import confirm, failed_count, load_rows, mai
 
 
 def _row(question, output, success, reason="", error=None):
+    # Shaped like real promptfoo rows (run 44878114694): a failed grade ALSO puts its reason in
+    # "error", with failureReason 1; only a failure to grade has failureReason 2 and no grade
     row = {
         "vars": {"question": question},
         "response": {"output": output},
         "success": success,
-        "gradingResult": {"reason": reason},
+        "gradingResult": {"pass": success, "reason": reason},
+        "failureReason": 0 if success else 1,
     }
+    if not success:
+        row["error"] = reason
     if error:
         row["error"] = error
         row["gradingResult"] = None
+        row["failureReason"] = 2
     return row
 
 

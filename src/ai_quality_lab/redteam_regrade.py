@@ -55,9 +55,13 @@ def _reason(row: dict[str, Any]) -> str:
     return str((row.get("gradingResult") or {}).get("reason", "") or row.get("error") or "")
 
 
+_FAILURE_REASON_ERROR = 2  # promptfoo: 0 = passed, 1 = an assertion failed, 2 = an error
+
+
 def _was_graded(row: dict[str, Any]) -> bool:
-    # A row with an error (timeout, missing answer) has no grade, only a failure to grade
-    return not row.get("error") and row.get("gradingResult") is not None
+    # promptfoo also copies a failed grade's reason into "error", so "error" alone can't tell a
+    # failed grade from a failure to grade (timeout, missing answer); failureReason can
+    return row.get("gradingResult") is not None and row.get("failureReason") != _FAILURE_REASON_ERROR
 
 
 def failed_count(rows: Sequence[dict[str, Any]]) -> int:
