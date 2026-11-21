@@ -75,18 +75,46 @@ jobs:
         timeout-minutes: 15
         run: npx promptfoo eval --no-share --max-concurrency 1 -c promptfooconfig.ollama.yaml -o model-eval-results.json
 
+      # The attacks go to their own file. `redteam run --output redteam.yaml` wrote the eval results
+      # over the generated tests, so they could not be run or graded again.
+      - name: Generate the red-team attacks
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        timeout-minutes: 10
+        run: npx promptfoo redteam generate --max-concurrency 1 -c promptfooconfig.redteam.yaml -o redteam-tests.yaml
+
       - name: Run the red team
         # Findings are for review, so they don't fail this step on their own
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && hashFiles('redteam-tests.yaml') != '' }}
         continue-on-error: true
-        timeout-minutes: 30
-        run: npx promptfoo redteam run --max-concurrency 1 -c promptfooconfig.redteam.yaml --output redteam.yaml
+        timeout-minutes: 20
+        run: npx promptfoo redteam eval --no-share --max-concurrency 1 -c redteam-tests.yaml -o redteam-results.json
 
-      # redteam.yaml holds only the generated attacks; this saves each answer and grader reason
-      - name: Export the red team results
-        if: ${{ !cancelled() }}
+      # The grader is not repeatable: on 21 Nov identical answers passed in one run and failed in the
+      # next. Each failed answer is graded again with the answer replayed from the first pass (not
+      # asked again), and --no-cache makes the grader decide afresh instead of reusing its verdict.
+      - name: Grade the failed red-team answers again
+        if: ${{ !cancelled() && hashFiles('redteam-results.json') != '' }}
         continue-on-error: true
-        run: npx promptfoo export eval latest -o redteam-results.json
+        timeout-minutes: 15
+        env:
+          REDTEAM_REPLAY_FILE: redteam-results.json
+        run: |
+          failed=$(python -m ai_quality_lab.redteam_regrade failed-count redteam-results.json)
+          echo "The first grade failed $failed probe(s)"
+          if [ "$failed" -gt 0 ]; then
+            # Exits non-zero when a probe fails again; the next step decides what that means
+            npx promptfoo redteam eval --no-share --no-cache --max-concurrency 1 -c redteam-tests.yaml \
+              --filter-failing redteam-results.json -o redteam-regrade.json || true
+          fi
+
+      - name: Confirm the red-team findings
+        # A probe fails only when both grades fail it; the table goes to the job summary
+        if: ${{ !cancelled() && hashFiles('redteam-results.json') != '' }}
+        continue-on-error: true
+        run: >-
+          python -m ai_quality_lab.redteam_regrade confirm redteam-results.json redteam-regrade.json
+          --output redteam-confirmed.json
 
       - name: Save the results
         if: ${{ always() }}
@@ -95,6 +123,8 @@ jobs:
           name: model-eval-results
           path: |
             model-eval-results.json
-            redteam.yaml
+            redteam-tests.yaml
             redteam-results.json
+            redteam-regrade.json
+            redteam-confirmed.json
           if-no-files-found: warn

@@ -56,15 +56,17 @@ PROMPTFOO_PYTHON=.venv/bin/python npx promptfoo eval --no-share -c promptfooconf
 
 - `src/ai_quality_lab/assistant.py` — deterministic target and top-k knowledge retrieval.
 - `src/ai_quality_lab/retrieval_eval.py` — retrieval metrics and command-line quality gate.
+- `src/ai_quality_lab/redteam_regrade.py` — grades failed red-team answers a second time (answers replayed) and keeps only the fails both grades agree on.
 - `data/knowledge_base.json` — the three source articles used by the sample assistant.
 - `data/retrieval_eval.json` — labeled retrieval queries and expected article IDs.
 - `tests/test_assistant.py` — component-level checks with lowercase test IDs.
+- `tests/test_redteam_regrade.py` — checks for the red-team second grade.
 - `promptfoo_provider.py` — connects the deterministic target to Promptfoo.
 - `promptfooconfig.yaml` — nine deterministic behavior evaluations.
 - `promptfooconfig.ollama.yaml` — eight optional local-model evaluations with a local Ollama target and grader.
 - `promptfooconfig.redteam.yaml` — optional local red-team policies and Ollama attacker/grader.
 - `.github/workflows/ci.yml` — runs pytest, retrieval quality checks, and Promptfoo on pushes, pull requests and weekly.
-- `.github/workflows/model-evals.yml` — runs the Ollama suite and the red team weekly and when the model path changes.
+- `.github/workflows/model-evals.yml` — runs the Ollama suite and the red team weekly and when the model path changes; each red-team fail is graded twice.
 - `package.json`, `package-lock.json` — pin the Promptfoo version.
 
 ## Evaluation approach
